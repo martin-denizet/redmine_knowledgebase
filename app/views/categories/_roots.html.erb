@@ -1,0 +1,11 @@
+<div id="categories_nav">
+  <ul>                   
+    <% Category.roots.each do |category| %>
+    <% if category.id == selected %>
+    <li class="current"><%= category.title %></li>
+    <% else %>    
+    <li><%= link_to category.title + " (" + category.articles.length.to_s + ")", :controller => 'categories', :action => 'show', :id => category.id  %></li>
+    <% end %>
+    <% end %>
+  </ul>
+</div>

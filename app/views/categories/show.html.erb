@@ -1,45 +1,48 @@
-<div id="category-crumbs">
-	<%= link_to "Home", { :controller => 'knowledgebase', :action => 'index' } %>
-	<% @category.ancestors.each do |ancestor| %>
-	&nbsp;&raquo;&nbsp; 
-	<%= link_to ancestor.title, { :controller => 'categories', :action => 'show', :id => ancestor.id } %>
-	<% end %>
-</div>
-
-<div class="contextual">
-	<%= link_to_if_logged_in "Create Article", 
-			{ :controller => 'articles', :action => 'new', :category_id => @category.id }, 
-			:class => 'icon icon-add' %>
-	&nbsp;|&nbsp;
-	<%= link_to_if_logged_in "New Category", 
-		{ :controller => 'categories', :action => 'new' }, 
-		:class => 'icon icon-add' %>    
-	&nbsp;|&nbsp;
-	<%= link_to_if_logged_in "Edit Category", 
-			{ :controller => 'categories', :action => 'edit', :id => @category.id }, 
-			:class => 'icon icon-edit' %>    
-</div>
-<h2><%= @category.title %></h2>
-<p><div class="wiki"><%= textilizable @category.description unless @category.description.nil? %></div></p>
-
-<% @kids = @category.children %>
-
-<% if @kids.length > 0 %>
-<div class="categories">
-	<div class="category-header">Sub-categories</div>
-	<br />
-	<% @kids.each do |subs| %>
-	<%= link_to_if_logged_in subs.title + " (" + subs.articles.length.to_s + ")", 
-			{ :controller => 'categories', :action => 'show', :id => subs.id }, 
-			:class => 'category-title' %>    
-	<% end %>
-</div>
-<% end %>
-<% if @articles.length > 0%>
-<h3>Articles</h3>
-<%= render :partial => 'articles/list', :locals => { :summary_format => "normal", :articles => @articles, :default_icon => 'normal' } %>
-<% end %>
-
 <% content_for :header_tags do %>
     <%= stylesheet_link_tag 'knowledgebase', :plugin => 'redmine_knowledgebase' %>
 <% end %>
+
+<table width="100%">
+  <tr>
+    <td class="section" width="270"><%= render :partial => "roots", :locals => { :selected => @category.id } %></td>
+    <td class="section">
+         
+      
+      <div id="category-crumbs">
+        <%= link_to "Home", { :controller => 'knowledgebase', :action => 'index' } %>
+        <% @category.ancestors.each do |ancestor| %>
+        &nbsp;&raquo;&nbsp; 
+        <%= link_to ancestor.title, { :controller => 'categories', :action => 'show', :id => ancestor.id } %>
+        <% end %>
+        &nbsp;&raquo;&nbsp;
+        <%= link_to @category.title, { :controller => 'categories', :action => 'show', :id => @category.id } %>
+      </div>
+      
+      <p style="padding-top: 8px; padding-bottom: 5px;">
+        <%= link_to_if_logged_in "Create Article", { :controller => 'articles', :action => 'new', :category_id => @category.id }, :class => 'icon icon-add' %>
+        &nbsp;|&nbsp;
+        <%= link_to_if_logged_in "New Category", { :controller => 'categories', :action => 'new' }, :class => 'icon icon-add' %>    
+        &nbsp;|&nbsp;
+        <%= link_to_if_logged_in "Edit Category", { :controller => 'categories', :action => 'edit', :id => @category.id }, :class => 'icon icon-edit' %> 
+      </p>            
+      
+      <% @kids = @category.children %>
+      
+      <% if @kids.length > 0 %>
+      <div class="categories">
+        <div class="category-header">Sub-categories</div>
+        <br />
+        <% @kids.each do |subs| %>
+        <%= link_to_if_logged_in subs.title + " (" + subs.articles.length.to_s + ")", 
+            { :controller => 'categories', :action => 'show', :id => subs.id }, 
+            :class => 'category-title' %>    
+        <% end %>
+      </div>
+      <% end %>
+      <% if @articles.length > 0%>
+      <h3>Articles</h3>
+      <%= render :partial => 'articles/list', :locals => { :summary_format => "normal", :articles => @articles, :default_icon => 'normal' } %>
+      <% end %>
+    </td>
+  </tr>
+</table>
