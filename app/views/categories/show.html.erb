@@ -4,10 +4,8 @@
 
 <table width="100%">
   <tr>
-    <td class="section" width="270"><%= render :partial => "roots", :locals => { :selected => @category.id } %></td>
-    <td class="section">
-         
-      
+    <td class="section left_column"><%= render :partial => "roots", :locals => { :selected => @category.id } %></td>
+    <td class="section">               
       <div id="category-crumbs">
         <%= link_to "Home", { :controller => 'knowledgebase', :action => 'index' } %>
         <% @category.ancestors.each do |ancestor| %>
@@ -20,8 +18,6 @@
       
       <p style="padding-top: 8px; padding-bottom: 5px;">
         <%= link_to_if_logged_in "Create Article", { :controller => 'articles', :action => 'new', :category_id => @category.id }, :class => 'icon icon-add' %>
-        &nbsp;|&nbsp;
-        <%= link_to_if_logged_in "New Category", { :controller => 'categories', :action => 'new' }, :class => 'icon icon-add' %>    
         &nbsp;|&nbsp;
         <%= link_to_if_logged_in "Edit Category", { :controller => 'categories', :action => 'edit', :id => @category.id }, :class => 'icon icon-edit' %> 
       </p>            

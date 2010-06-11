@@ -1,5 +1,10 @@
+<% if User.current.logged? %>
+<p style=" border-bottom: dotted 1px #CCCCCC; padding-bottom: 5px;">
+  <%= link_to "New Category", { :controller => 'categories', :action => 'new' }, :class => 'icon icon-add' %>
+</p>
+<% end %>
 <div id="categories_nav">
-  <ul>                   
+  <ul>                       
     <% Category.roots.each do |category| %>
     <% if category.id == selected %>
     <li class="current"><%= category.title %></li>

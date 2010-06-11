@@ -23,7 +23,7 @@
 #category-crumbs { background: url(../images/icon-home.png) 0px 3px no-repeat; border-bottom: dotted 1px #CCCCCC; padding-left: 20px; padding-bottom: 5px; }
 #category-crumbs a:hover { text-decoration: underline; }
 
-#categories_nav { float:left; min-width: 270px; }
+#categories_nav { float:left; width: 270px; }
 #categories_nav ul { margin: 0; padding: 0; background: transparent url(../images/nav_ul_bg.gif) bottom right no-repeat; list-style: none; padding-bottom: 125px; }
 #categories_nav li { border-bottom: 1px solid #ced3d5; background: transparent url(../images/nav_item_hover_bg.gif) top right repeat-y; }
 #categories_nav li a:link, #categories_nav li a:visited { padding-right: 10px; padding-left: 5px; line-height: 27px; display: block; color: #1a6ab3; background: transparent url(../images/nav_item_bg.gif) top right repeat-y; padding-right: 10px; }
@@ -56,6 +56,8 @@ ul.stars li a.five_stars  { width: 100%; z-index: 2; }
 .rating-title span { font-size:12px; font-weight:normal; }
 
 .section {vertical-align:top;}
+.left_column { width: 270px; }
+
 #section-title { padding:6px 0px; color:#669933; font-size:15px; font-weight:bold; border-bottom:solid 1px #CCCCCC; padding-bottom: 10px; }
 #section-title.attachments { background-image: url(../images/attachments.png); background-repeat: no-repeat; padding-left: 42px; }
 #section-title.comments { background-image: url(../images/comments.png); background-repeat: no-repeat; padding-left: 42px; }

@@ -6,21 +6,17 @@
 
 <table width="100%" height="100%">
   <tr>
-    <td class="section">      
+    <td class="section left_column">      
       <%= render :partial => "categories/roots", :locals => { :selected => nil } %>
     </td>
     <td class="section">
-      <div class="contextual">
-        <% if @categories.length > 0 %>
+      <% if @categories.length > 0 %>
+      <p>        
         <label for="category_id"><strong>Jump to Category</strong></label>
         &nbsp;
-        <%= select_tag :category_id, 
-          options_for_select(nested_set_options(Category) {|i| "#{'»' * i.level} #{i.title}" }),
-          :onchange => "if (this.value != \'\') { window.location = 'knowledgebase/categories/' + this.value; }"
-        %>
-        <% end %>                
-      </div>
-
+        <%= select_tag :category_id, options_for_select(nested_set_options(Category) {|i| "#{'»' * i.level} #{i.title}" }), :onchange => "if (this.value != \'\') { window.location = 'knowledgebase/categories/' + this.value; }" %>        
+      </p>
+      <% end %>                
       <% if Article.count > 0 %>
 
       <table id="article-summaries" width="100%" cellpadding="5">
