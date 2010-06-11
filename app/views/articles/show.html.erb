@@ -6,29 +6,7 @@
 <% end %>
 
 <table width="100%" height="100%">
-  <tr>
-    <td class="section" style="border-right: dotted 1px #CCCCCC; width: 150px; height: 100%;">
-      <%= render :partial => "rating", :locals => {:article => @article } %>  
-      <% unless @article.tag_list.empty? %> 
-      <br /><br /><br />
-      <div class="rating-title">Tags</div>
-      <ul id="taglist">
-        <% @article.tag_list.each do |tag| %>
-         <li><%= link_to tag, { :action => "tagged", :id => tag }, :class => "tag" %></li>
-        <% end %>
-      </ul>  
-        
-      </div>
-      <% end %>
-      
-      <div id="article-options">
-        <ul>
-          <li><%= link_to_if_logged_in "Edit", { :controller => 'articles', :action => 'edit', :id => @article.id }, :class => 'icon icon-edit' %></li>
-          <li><%= link_to_if_logged_in "Delete", { :controller => 'articles', :action => 'destroy', :id => @article.id }, :confirm => l(:text_are_you_sure), :method => :delete, :class => 'icon icon-del' %></li>
-          <li><%= link_to_remote_if_logged_in "New Comment", :url => { :controller => "articles", :action => "comment", :article_id => @article.id }, :html => { :class => "icon icon-comment" } %></li>
-        </ul>
-      </div>           
-    </td>
+  <tr>    
     <td class="section"> 
       <div id="category-crumbs">
       	<%= link_to l(:label_home), { :controller => 'knowledgebase', :action => 'index' } %>
@@ -69,6 +47,28 @@
       </div>
       <% end %>
       <% end %>
+    </td>
+    <td class="section" style="border-left: dotted 1px #CCCCCC; width: 150px; height: 100%; padding-left: 5px;">
+      <%= render :partial => "rating", :locals => {:article => @article } %>  
+      <% unless @article.tag_list.empty? %> 
+      <br /><br /><br />
+      <div class="rating-title">Tags</div>
+      <ul id="taglist">
+        <% @article.tag_list.each do |tag| %>
+         <li><%= link_to tag, { :action => "tagged", :id => tag }, :class => "tag" %></li>
+        <% end %>
+      </ul>  
+        
+      </div>
+      <% end %>
+      
+      <div id="article-options">
+        <ul>
+          <li><%= link_to_if_logged_in "Edit", { :controller => 'articles', :action => 'edit', :id => @article.id }, :class => 'icon icon-edit' %></li>
+          <li><%= link_to_if_logged_in "Delete", { :controller => 'articles', :action => 'destroy', :id => @article.id }, :confirm => l(:text_are_you_sure), :method => :delete, :class => 'icon icon-del' %></li>
+          <li><%= link_to_remote_if_logged_in "New Comment", :url => { :controller => "articles", :action => "comment", :article_id => @article.id }, :html => { :class => "icon icon-comment" } %></li>
+        </ul>
+      </div>           
     </td>
   </tr>
 </table>
