@@ -1,12 +1,12 @@
-= Redmine Knowledgebase plugin
+# Redmine Knowledgebase plugin
 
 This plugin adds generic knowledgebase funcationlity to the redmine project management application.
 
-== Introduction
+## Introduction
 
 Redmine (www.redmine.org) is just plain awesome, and has proven to provide 90% of the functionality I need. The one feature that was missing was a usable knowledgebase component. I've looked at some of the open source solutions available, but couldn't find anything that fit my needs exactly. Seeing as redmine is so easily extended, I figured why not create it for this platform instead of starting yet another project from scratch :P
 
-== Features
+## Features
 
 * Categorization of Articles
 * Article ratings
@@ -14,7 +14,7 @@ Redmine (www.redmine.org) is just plain awesome, and has proven to provide 90% o
 * Article Comments
 * Article Tags
 
-== Requirements
+## Requirements
 
 Note that whenever possible, the necessary plugins for the knowledgebase have been stripped into the project (so they're not setup as plugins, but modules). The copyright information has been preserved when available, and the links are provided below.
 I figure if there's ever a need for these plugins in the greater Redmine application, they can be incorporated into the trunk at that point and called accordingly.
@@ -22,13 +22,6 @@ I figure if there's ever a need for these plugins in the greater Redmine applica
 * acts_as_viewed (http://rubyforge.org/projects/acts-as-viewed)
 * acts_as_rated (http://rubyforge.org/projects/acts-as-rated)
 * acts_as_taggable_on_steroids (http://github.com/jviney/acts_as_taggable_on_steroids)
-
-= Installation                                                                     
-                                             
-<!-- Redmine Knowledgebase Plugin Install Guide
-The only formatting here is to have the two items run from the command line in code blocks,
-and to have the directory listing for the redmine root directory in italiacs.
--->
 
 # Redmine Knowledgebase Plugin install guide
 
@@ -65,21 +58,9 @@ More information on installing Redmine plugins can be found here: [http://www.re
 After the plugin is installed and the db migration completed, you will
 need to restart Redmine for the plugin to be available. 
 
-= User Guide
-
-                                                                     
-                                                                     
-                                                                     
-                                             
-<!-- 
-Redmine Knowledgebase Plugin User Guide formatting guidelines
-Page elements that are used to do something such as add an article or category, are in bold.
-Page elements that are used for navigation, such as the Jump to Category drop down menu, are in italics.
-User defined items, such as those in the Create Category page, are in bold
--->
 # Redmine Knowledgebase Plugin User Guide
 
-### Overview
+## Overview
 
 Once the Redmine Knowledgebase Plugin is installed, there will be a
 Knowledgebase link in the Redmine navigation header. Unlike the Redmine

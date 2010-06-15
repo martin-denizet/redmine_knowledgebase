@@ -4,7 +4,7 @@
 </p>
 <% end %>
 <div id="categories_nav">
-  <ul>                       
+  <ul>                   
     <% Category.roots.each do |category| %>
     <% if category.id == selected %>
     <li class="current"><%= category.title %></li>
