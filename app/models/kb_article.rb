@@ -12,7 +12,7 @@ class KbArticle < ActiveRecord::Base
 
   acts_as_viewed
   acts_as_rated :no_rater => true
-  acts_as_taggable
+  acts_as_kb_taggable
   acts_as_attachable
 
   acts_as_searchable :columns => [ "kb_articles.title", "kb_articles.content"],

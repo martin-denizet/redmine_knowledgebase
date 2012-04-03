@@ -1,22 +1,22 @@
 module ActiveRecord #:nodoc:
   module Acts #:nodoc:
-    module Taggable #:nodoc:
+    module KbTaggable #:nodoc:
       def self.included(base)
         base.extend(ClassMethods)
       end
       
       module ClassMethods
-        def acts_as_taggable
-          has_many :taggings, :as => :taggable, :dependent => :destroy, :include => :tag
-          has_many :tags, :through => :taggings
+        def acts_as_kb_taggable
+          has_many :taggings, :as => :taggable, :dependent => :destroy, :include => :tag, :class_name => 'KbTagging', :foreign_key => 'taggable_id'
+          has_many :tags, :through => :taggings, :class_name => 'KbTag', :foreign_key => 'tag_id'
           
           before_save :save_cached_tag_list
           
           after_create :save_tags
           after_update :save_tags
           
-          include ActiveRecord::Acts::Taggable::InstanceMethods
-          extend ActiveRecord::Acts::Taggable::SingletonMethods
+          include ActiveRecord::Acts::KbTaggable::InstanceMethods
+          extend ActiveRecord::Acts::KbTaggable::SingletonMethods
           
           alias_method_chain :reload, :tag_list
         end
@@ -39,7 +39,7 @@ module ActiveRecord #:nodoc:
         # Options:
         #   :order - SQL Order how to order the tags. Defaults to "count DESC, tags.name".
         def find_related_tags(tags, options = {})
-          tags = tags.is_a?(Array) ? TagList.new(tags.map(&:to_s)) : TagList.from(tags)
+          tags = tags.is_a?(Array) ? KbTagList.new(tags.map(&:to_s)) : KbTagList.from(tags)
           
           related_models = find_tagged_with(tags)
           
@@ -47,13 +47,13 @@ module ActiveRecord #:nodoc:
           
           related_ids = related_models.to_s(:db)
           
-          Tag.find(:all, options.merge({
-            :select => "#{Tag.table_name}.*, COUNT(#{Tag.table_name}.id) AS count",
-            :joins  => "JOIN #{Tagging.table_name} ON #{Tagging.table_name}.taggable_type = '#{base_class.name}'
-              AND  #{Tagging.table_name}.taggable_id IN (#{related_ids})
-              AND  #{Tagging.table_name}.tag_id = #{Tag.table_name}.id",
-            :order => options[:order] || "count DESC, #{Tag.table_name}.name",
-            :group => "#{Tag.table_name}.id, #{Tag.table_name}.name HAVING #{Tag.table_name}.name NOT IN (#{tags.map { |n| quote_value(n) }.join(",")})"
+          KbTag.find(:all, options.merge({
+            :select => "#{KbTag.table_name}.*, COUNT(#{KbTag.table_name}.id) AS count",
+            :joins  => "JOIN #{KbTagging.table_name} ON #{KbTagging.table_name}.taggable_type = '#{base_class.name}'
+              AND  #{KbTagging.table_name}.taggable_id IN (#{related_ids})
+              AND  #{KbTagging.table_name}.tag_id = #{KbTag.table_name}.id",
+            :order => options[:order] || "count DESC, #{KbTag.table_name}.name",
+            :group => "#{KbTag.table_name}.id, #{KbTag.table_name}.name HAVING #{KbTag.table_name}.name NOT IN (#{tags.map { |n| quote_value(n) }.join(",")})"
           }))
         end
         
@@ -69,7 +69,7 @@ module ActiveRecord #:nodoc:
         end
         
         def find_options_for_find_tagged_with(tags, options = {})
-          tags = tags.is_a?(Array) ? TagList.new(tags.map(&:to_s)) : TagList.from(tags)
+          tags = tags.is_a?(Array) ? KbTagList.new(tags.map(&:to_s)) : KbTagList.from(tags)
           options = options.dup
           
           return {} if tags.empty?
@@ -80,16 +80,16 @@ module ActiveRecord #:nodoc:
           taggings_alias, tags_alias = "#{table_name}_taggings", "#{table_name}_tags"
           
           joins = [
-            "INNER JOIN #{Tagging.table_name} #{taggings_alias} ON #{taggings_alias}.taggable_id = #{table_name}.#{primary_key} AND #{taggings_alias}.taggable_type = #{quote_value(base_class.name)}",
-            "INNER JOIN #{Tag.table_name} #{tags_alias} ON #{tags_alias}.id = #{taggings_alias}.tag_id"
+            "INNER JOIN #{KbTagging.table_name} #{taggings_alias} ON #{taggings_alias}.taggable_id = #{table_name}.#{primary_key} AND #{taggings_alias}.taggable_type = #{quote_value(base_class.name)}",
+            "INNER JOIN #{KbTag.table_name} #{tags_alias} ON #{tags_alias}.id = #{taggings_alias}.tag_id"
           ]
           
           if options.delete(:exclude)
             conditions << <<-END
               #{table_name}.id NOT IN
-                (SELECT #{Tagging.table_name}.taggable_id FROM #{Tagging.table_name}
-                 INNER JOIN #{Tag.table_name} ON #{Tagging.table_name}.tag_id = #{Tag.table_name}.id
-                 WHERE #{tags_condition(tags)} AND #{Tagging.table_name}.taggable_type = #{quote_value(base_class.name)})
+                (SELECT #{KbTagging.table_name}.taggable_id FROM #{KbTagging.table_name}
+                 INNER JOIN #{KbTag.table_name} ON #{KbTagging.table_name}.tag_id = #{KbTag.table_name}.id
+                 WHERE #{tags_condition(tags)} AND #{KbTagging.table_name}.taggable_type = #{quote_value(base_class.name)})
             END
           else
             if options.delete(:match_all)
@@ -112,11 +112,11 @@ module ActiveRecord #:nodoc:
             taggings_alias, tags_alias = "taggings_#{index}", "tags_#{index}"
 
             join = <<-END
-              INNER JOIN #{Tagging.table_name} #{taggings_alias} ON
+              INNER JOIN #{KbTagging.table_name} #{taggings_alias} ON
                 #{taggings_alias}.taggable_id = #{table_name}.#{primary_key} AND
                 #{taggings_alias}.taggable_type = #{quote_value(base_class.name)}
 
-              INNER JOIN #{Tag.table_name} #{tags_alias} ON
+              INNER JOIN #{KbTag.table_name} #{tags_alias} ON
                 #{taggings_alias}.tag_id = #{tags_alias}.id AND
                 #{tags_alias}.name = ?
             END
@@ -129,9 +129,9 @@ module ActiveRecord #:nodoc:
         
         # Calculate the tag counts for all tags.
         # 
-        # See Tag.counts for available options.
+        # See KbTag.counts for available options.
         def tag_counts(options = {})
-          Tag.find(:all, find_options_for_tag_counts(options))
+          KbTag.find(:all, find_options_for_tag_counts(options))
         end
         
         def find_options_for_tag_counts(options = {})
@@ -141,19 +141,19 @@ module ActiveRecord #:nodoc:
           conditions = []
           conditions << send(:sanitize_conditions, options.delete(:conditions)) if options[:conditions]
           conditions << send(:sanitize_conditions, scope[:conditions]) if scope && scope[:conditions]
-          conditions << "#{Tagging.table_name}.taggable_type = #{quote_value(base_class.name)}"
+          conditions << "#{KbTagging.table_name}.taggable_type = #{quote_value(base_class.name)}"
           conditions << type_condition unless descends_from_active_record? 
           conditions.compact!
           conditions = conditions.join(" AND ")
           
-          joins = ["INNER JOIN #{table_name} ON #{table_name}.#{primary_key} = #{Tagging.table_name}.taggable_id"]
+          joins = ["INNER JOIN #{table_name} ON #{table_name}.#{primary_key} = #{KbTagging.table_name}.taggable_id"]
           joins << options.delete(:joins) if options[:joins]
           joins << scope[:joins] if scope && scope[:joins]
           joins = joins.join(" ")
           
           options = { :conditions => conditions, :joins => joins }.update(options)
           
-          Tag.options_for_counts(options)
+          KbTag.options_for_counts(options)
         end
         
         def caching_tag_list?
@@ -161,7 +161,7 @@ module ActiveRecord #:nodoc:
         end
         
        private
-        def tags_condition(tags, table_name = Tag.table_name)
+        def tags_condition(tags, table_name = KbTag.table_name)
           condition = tags.map { |t| sanitize_sql(["#{table_name}.name LIKE ?", t]) }.join(" OR ")
           "(" + condition + ")" unless condition.blank?
         end
@@ -172,14 +172,14 @@ module ActiveRecord #:nodoc:
           return @tag_list if @tag_list
           
           if self.class.caching_tag_list? and !(cached_value = send(self.class.cached_tag_list_column_name)).nil?
-            @tag_list = TagList.from(cached_value)
+            @tag_list = KbTagList.from(cached_value)
           else
-            @tag_list = TagList.new(*tags.map(&:name))
+            @tag_list = KbTagList.new(*tags.map(&:name))
           end
         end
         
         def tag_list=(value)
-          @tag_list = TagList.from(value)
+          @tag_list = KbTagList.from(value)
         end
         
         def save_cached_tag_list
@@ -201,7 +201,7 @@ module ActiveRecord #:nodoc:
             end
             
             new_tag_names.each do |new_tag_name|
-              tags << Tag.find_or_create_with_like_by_name(new_tag_name)
+              tags << KbTag.find_or_create_with_like_by_name(new_tag_name)
             end
           end
           
@@ -227,4 +227,4 @@ module ActiveRecord #:nodoc:
   end
 end
 
-ActiveRecord::Base.send(:include, ActiveRecord::Acts::Taggable)
+ActiveRecord::Base.send(:include, ActiveRecord::Acts::KbTaggable)

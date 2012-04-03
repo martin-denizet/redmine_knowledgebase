@@ -1,4 +1,4 @@
-class TagList < Array
+class KbTagList < Array
   cattr_accessor :delimiter
   self.delimiter = ','
   
