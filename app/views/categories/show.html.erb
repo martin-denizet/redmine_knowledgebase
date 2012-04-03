@@ -1,44 +1,41 @@
+<div id="category-crumbs">
+	<%= link_to l(:label_kb_home), { :controller => 'knowledgebase', :action => 'index' } %>
+	<% @category.ancestors.each do |ancestor| %>
+	&nbsp;&raquo;&nbsp;
+	<%= link_to ancestor.title, { :controller => 'categories', :action => 'show', :id => ancestor.id } %>
+	<% end %>
+  &nbsp;&raquo;&nbsp;
+  <%= @category.title %>
+</div>
+
+<% content_for :sidebar do %>
+	<ul id="options">
+		<li><%= link_to_if_authorized_globally l(:label_new_article), { :controller => 'articles', :action => 'new', :category_id => @category.id }, :class => 'icon icon-add' %></li>
+    <li><%= link_to_if_authorized_globally l(:label_new_category), { :controller => 'categories', :action => 'new', :parent_id => @category.id }, :class => 'icon icon-add' %></li>
+    <li><%= link_to_if_authorized_globally l(:label_edit_category), { :controller => 'categories', :action => 'edit', :id => @category.id }, :class => 'icon icon-edit' %></li>
+    <li><%= link_to_if_authorized_globally l(:label_delete_category), { :controller => 'categories', :action => 'destroy', :id => @category.id }, :class => 'icon icon-del', :confirm => l(:text_are_you_sure) %></li>
+	</ul>
+<% end %>
+
+<p><div class="wiki"><%= textilizable @category.description unless @category.description.nil? %></div></p>
+
+<% @kids = @category.children %>
+
+<% if @kids.length > 0 %>
+  <div class="categories">
+    <div class="category-header"><%= l(:label_subcategories) %></div>
+    <br />
+    <% @kids.each do |subs| %>
+      <%= link_to subs.title + " (" + subs.articles.length.to_s + ")", { :controller => 'categories', :action => 'show', :id => subs.id }, :class => 'category-title' %>
+    <% end %>
+  </div>
+<% end %>
+<% if @articles.length > 0%>
+  <h3><%= l(:label_article_plural) %></h3>
+  <%= render :partial => 'articles/list', :locals => { :summary_format => "normal", :articles => @articles, :default_icon => 'normal' } %>
+<% end %>
+
 <% content_for :header_tags do %>
     <%= stylesheet_link_tag 'knowledgebase', :plugin => 'redmine_knowledgebase' %>
 <% end %>
 
-<table width="100%">
-  <tr>
-    <td class="section left_column"><%= render :partial => "roots", :locals => { :selected => @category.id } %></td>
-    <td class="section">               
-      <div id="category-crumbs">
-        <%= link_to "Home", { :controller => 'knowledgebase', :action => 'index' } %>
-        <% @category.ancestors.each do |ancestor| %>
-        &nbsp;&raquo;&nbsp; 
-        <%= link_to ancestor.title, { :controller => 'categories', :action => 'show', :id => ancestor.id } %>
-        <% end %>
-        &nbsp;&raquo;&nbsp;
-        <%= link_to @category.title, { :controller => 'categories', :action => 'show', :id => @category.id } %>
-      </div>
-      
-      <p style="padding-top: 8px; padding-bottom: 5px;">
-        <%= link_to_if_logged_in "Create Article", { :controller => 'articles', :action => 'new', :category_id => @category.id }, :class => 'icon icon-add' %>
-        &nbsp;|&nbsp;
-        <%= link_to_if_logged_in "Edit Category", { :controller => 'categories', :action => 'edit', :id => @category.id }, :class => 'icon icon-edit' %> 
-      </p>            
-      
-      <% @kids = @category.children %>
-      
-      <% if @kids.length > 0 %>
-      <div class="categories">
-        <div class="category-header">Sub-categories</div>
-        <br />
-        <% @kids.each do |subs| %>
-        <%= link_to_if_logged_in subs.title + " (" + subs.articles.length.to_s + ")", 
-            { :controller => 'categories', :action => 'show', :id => subs.id }, 
-            :class => 'category-title' %>    
-        <% end %>
-      </div>
-      <% end %>
-      <% if @articles.length > 0%>
-      <h3>Articles</h3>
-      <%= render :partial => 'articles/list', :locals => { :summary_format => "normal", :articles => @articles, :default_icon => 'normal' } %>
-      <% end %>
-    </td>
-  </tr>
-</table>
